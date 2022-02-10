@@ -6,6 +6,7 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { mapRange } from "../../Utils/clamp";
 import { Modal, Button, Form } from "react-bootstrap";
 import _ from "lodash";
+import { accelDenoise } from "./../../Utils/accelDenoise";
 const { REACT_APP_WS_URL } = process.env;
 const Controller = () => {
   const [messageHistory, setMessageHistory] = useState([]);
@@ -55,7 +56,7 @@ const Controller = () => {
 
   useEffect(() => {
     if (motionState?.acceleration) {
-      const { x, y, z } = motionState?.acceleration;
+      const { x, y, z } = accelDenoise(motionState.acceleration);
       const pitch = Math.floor((Math.atan2(z, -y) * 180) / Math.PI).toFixed(
         0.2
       );

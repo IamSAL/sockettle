@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { safeParseJSON } from "../../Utils/safeParseJSON";
 import QRCode from "react-qr-code";
+import ThreeModel from "../../Components/ThreeModel";
 const { REACT_APP_WS_URL } = process.env;
 const Display = () => {
   const { sendMessage, lastMessage, readyState } =
@@ -73,7 +74,7 @@ const Display = () => {
         <h1 style={{ fontSize: "5em" }}>
           {recievedData.type == "custom"
             ? recievedData.angle
-            : recievedData.rotationState?.yaw}
+            : recievedData.rotationState?.roll}
           °
         </h1>
         <h3>{recievedData.type?.toUpperCase()}</h3>
@@ -115,6 +116,7 @@ const Display = () => {
         </h4>
       </div>
       <div className="d-flex justify-content-center py-5 bottle">
+        {/* <ThreeModel /> */}
         <img
           src={BottleNormal}
           alt=""
@@ -137,7 +139,7 @@ const Display = () => {
             transform: `rotate(${
               recievedData.type == "custom"
                 ? recievedData.angle
-                : recievedData.rotationState?.yaw
+                : recievedData.rotationState?.roll
             }deg)`,
             transition: "unset",
           }}
