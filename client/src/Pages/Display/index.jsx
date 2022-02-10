@@ -43,9 +43,8 @@ const Display = () => {
   }, [lastMessage]);
 
   useEffect(() => {
-    console.log(recievedData.quaternion);
+    window.Model = Model;
     if (Model && recievedData.quaternion) {
-      window.Model = Model;
       Model.quaternion.fromArray(recievedData.quaternion).invert();
     }
     return () => {};
@@ -88,9 +87,7 @@ const Display = () => {
         <h1 style={{ fontSize: "5em" }}>
           {recievedData.type == "custom" ? recievedData.angle + "°" : +"XYZW"}
         </h1>
-        <span className="text-muted">
-          {recievedData.quaternion.map().join(",")}
-        </span>
+        <span className="text-muted">{recievedData.quaternion?.join(",")}</span>
         <h3>{recievedData.type?.toUpperCase()}</h3>
         <h5 className="text-muted">
           Connection{" "}

@@ -23,7 +23,7 @@ function ThreeModel({ setModel, Model }) {
     window.camera = camera;
     window.scene = scene;
     findModel(scene);
-    console.log(setModel, Model);
+
     return () => {};
   }, [camera, scene, Model]);
 
