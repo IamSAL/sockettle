@@ -76,7 +76,7 @@ const Display = () => {
             ? recievedData.angle
             : recievedData.rotationState?.acc
             ? `${recievedData.rotationState.acc.x},${recievedData.rotationState.acc.y},${recievedData.rotationState.acc.z}`
-            : recievedData.rotationState.roll}
+            : recievedData.rotationState?.roll}
           °
         </h1>
         <h3>{recievedData.type?.toUpperCase()}</h3>
@@ -152,7 +152,7 @@ const Display = () => {
                 ? `rotate(${recievedData.angle}deg)`
                 : recievedData.rotationState?.acc
                 ? `rotateX(${recievedData.rotationState.acc.x} deg) rotateY(${recievedData.rotationState.acc.y} deg) rotateZ(${recievedData.rotationState.acc.z} deg)`
-                : `rotate(${recievedData.rotationState.roll}deg)`,
+                : `rotate(${recievedData.rotationState?.roll}deg)`,
             transition: "unset",
           }}
         />
