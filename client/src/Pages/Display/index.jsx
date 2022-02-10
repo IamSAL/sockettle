@@ -157,9 +157,7 @@ const Display = () => {
             transform:
               recievedData.type == "custom"
                 ? `rotate(${recievedData.angle}deg)`
-                : `rotateX(${0}deg)rotateY(${0}deg)rotateZ(${
-                    recievedData.rotationState?.yaw
-                  }deg)`,
+                : `rotateX(${recievedData.rotationState?.roll}deg)rotateY(${recievedData.rotationState?.pitch}deg)rotateZ(${recievedData.rotationState?.yaw}deg)`,
             transition: "unset",
           }}
         />
