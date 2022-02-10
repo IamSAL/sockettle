@@ -37,6 +37,13 @@ const Display = () => {
 
     return () => {};
   }, [lastMessage]);
+
+  useEffect(() => {
+    console.log(recievedData);
+
+    return () => {};
+  }, [recievedData]);
+
   return (
     <div className="display container">
       <div className="qr-code text-center shadow-lg">
@@ -72,7 +79,7 @@ const Display = () => {
           <span class="visually-hidden">Loading...</span>
         </div>
         <h1 style={{ fontSize: "5em" }}>
-          {recievedData.type == "Custom"
+          {recievedData.type == "custom"
             ? recievedData.angle
             : `${Math.floor(recievedData.rotationState?.roll)},${Math.floor(
                 recievedData.rotationState?.pitch
@@ -126,7 +133,7 @@ const Display = () => {
           className="w-auto"
           // style={{
           //   transform: `rotate(${
-          //     recievedData.type != "Custom"
+          //     recievedData.type != "custom"
           //       ? recievedData.type == "landscape-primary"
           //         ? 360 - recievedData.angle
           //         : recievedData.type == "landscape-secondary"
@@ -139,7 +146,7 @@ const Display = () => {
 
           // style={{
           //   transform: `rotate(${
-          //     recievedData.type == "Custom"
+          //     recievedData.type == "custom"
           //       ? recievedData.angle
           //       : recievedData.rotationState?.pitch
           //   }deg)`,
@@ -148,7 +155,7 @@ const Display = () => {
 
           style={{
             transform:
-              recievedData.type == "Custom"
+              recievedData.type == "custom"
                 ? `rotate(${recievedData.angle}deg)`
                 : `rotateX(${recievedData.rotationState?.roll} deg) rotateY(${recievedData.rotationState?.pitch} deg) rotateZ(${recievedData.rotationState?.yaw} deg)`,
             transition: "unset",

@@ -23,7 +23,7 @@ const Controller = () => {
       alert("You must give a 4 digit display code.");
     }
   };
-  const motionState = useMotion(60);
+  const motionState = useMotion();
   const [rotationState, setrotationState] = useState({});
   const orientation = useOrientation();
   const { width: deviceWidth } = useWindowSize();
@@ -44,7 +44,7 @@ const Controller = () => {
     }
 
     return () => {};
-  }, [orientation, rotationState]);
+  }, [orientation, rotationState, inputMode]);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -94,7 +94,7 @@ const Controller = () => {
       JSON.stringify({
         method: "orientation",
         payload: {
-          type: "Custom",
+          type: "custom",
           angle: customInput,
           time: Date.now(),
           displayCode,
