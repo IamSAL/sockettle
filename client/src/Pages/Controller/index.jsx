@@ -135,7 +135,9 @@ const Controller = () => {
         {/* <pre>{JSON.stringify(motionState, null, 2)}</pre> */}
 
         <div className="details position-absolute">
-          <h1 style={{ fontSize: "3em" }}>{orientation.angle}°</h1>
+          <h1 style={{ fontSize: "3em" }}>
+            {inputMode == "custom" ? customInput : rotationState?.pitch}°
+          </h1>
           <h3>{orientation.type.toUpperCase()}</h3>
           <h5 className="text-muted">
             Controlling{" "}
