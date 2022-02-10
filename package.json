@@ -1,0 +1,32 @@
+{
+  "name": "express-ws-boiler",
+  "version": "1.0.0",
+  "description": "An easy to use express and ws boiler plate",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon index",
+    "build": "cd client && npm install && npm run build"
+  },
+  "keywords": [],
+  "author": {
+    "email": "me@unsmart.co",
+    "name": "Garret Harp"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "ws": "^7.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/itsUnsmart/express-ws-boiler.git"
+  },
+  "bugs": {
+    "url": "https://github.com/itsUnsmart/express-ws-boiler/issues"
+  },
+  "homepage": "https://github.com/itsUnsmart/express-ws-boiler"
+}

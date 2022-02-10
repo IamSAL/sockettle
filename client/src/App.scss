@@ -1,0 +1,93 @@
+@import "~bootstrap/scss/bootstrap";
+body {
+  background-color: #212529;
+  color: white;
+  overflow: hidden;
+}
+.bottle {
+  img {
+    transform-origin: bottom;
+    height: 90vh;
+    transition: 0.2s;
+  }
+}
+
+.controller {
+  align-items: center;
+  height: 100vh;
+  display: flex;
+  .details {
+    top: 20px;
+    left: 35%;
+    z-index: 99;
+  }
+  @media screen and(orientation:landscape) {
+    .details {
+      top: 20px;
+      left: 65%;
+    }
+  }
+}
+.landing {
+  height: 100vh;
+}
+.mode-select {
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  a {
+    all: unset !important;
+  }
+  h2 {
+    margin: unset;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.mode-display {
+  background-color: #04293a;
+  &:hover {
+    background-color: #064663;
+  }
+}
+.mode-control {
+  background-color: #21325e;
+  &:hover {
+    background-color: #3e497a;
+  }
+}
+
+// @media screen and (max-width: 865px) and (orientation: landscape) {
+//   html {
+//     transform: rotate(-90deg);
+//     transform-origin: left top;
+//     width: 100vh;
+//     overflow-x: hidden;
+//     position: absolute;
+//     top: 100%;
+//     left: 0;
+//   }
+//   .controller {
+//     height: 100vw;
+//   }
+//   .landing {
+//     height: 100vw;
+//   }
+// }
+
+.modal-content {
+  background-color: rgba(58, 58, 58, 0.884) !important;
+  border: 1;
+}
+
+.modal-content .close {
+  opacity: 1;
+  color: #ffffff !important;
+}
+.cursor-pointer {
+  cursor: pointer;
+}
