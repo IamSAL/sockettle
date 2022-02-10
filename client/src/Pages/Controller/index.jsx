@@ -44,7 +44,7 @@ const Controller = () => {
     }
 
     return () => {};
-  }, [orientation, rotationState, inputMode]);
+  }, [orientation, rotationState, inputMode, displayCode]);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -59,15 +59,11 @@ const Controller = () => {
   useEffect(() => {
     if (motionState?.acceleration) {
       const { x, y, z } = accelDenoise(motionState.acceleration);
-      const pitch = Math.floor((Math.atan2(z, -y) * 180) / Math.PI).toFixed(
-        0.2
-      );
-      const roll = Math.floor((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
-      const yaw = Math.floor((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
+      const pitch = ((Math.atan2(z, -y) * 180) / Math.PI).toFixed(0.2);
+      const roll = ((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
+      const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
       const result = { pitch, roll, yaw };
-      if (!_.isEqual(result, rotationState)) {
-        setrotationState({ ...result, acc: { x, y, z } });
-      }
+      setrotationState({ ...result, acc: { x, y, z } });
     }
 
     return () => {};

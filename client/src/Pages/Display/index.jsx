@@ -22,7 +22,7 @@ const Display = () => {
 
   const [recievedData, setrecievedData] = useState({
     angle: 0,
-    type: "Undetected",
+    type: "custom",
   });
   useEffect(() => {
     if (lastMessage) {
@@ -157,7 +157,7 @@ const Display = () => {
             transform:
               recievedData.type == "custom"
                 ? `rotate(${recievedData.angle}deg)`
-                : `rotateX(${recievedData.rotationState?.roll} deg) rotateY(${recievedData.rotationState?.pitch} deg) rotateZ(${recievedData.rotationState?.yaw} deg)`,
+                : `rotateX(${recievedData.rotationState?.roll}deg)rotateY(${recievedData.rotationState?.pitch}deg)rotateZ(${recievedData.rotationState?.yaw}deg)`,
             transition: "unset",
           }}
         />
