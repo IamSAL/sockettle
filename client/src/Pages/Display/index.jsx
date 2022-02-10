@@ -5,6 +5,8 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import { safeParseJSON } from "../../Utils/safeParseJSON";
 import QRCode from "react-qr-code";
 import ThreeModel from "../../Components/ThreeModel";
+import { Canvas } from "@react-three/fiber";
+
 const { REACT_APP_WS_URL } = process.env;
 const Display = () => {
   const { sendMessage, lastMessage, readyState } =
@@ -24,6 +26,8 @@ const Display = () => {
     angle: 0,
     type: "custom",
   });
+
+  const [Model, setModel] = useState(null);
   useEffect(() => {
     if (lastMessage) {
       const parsedMsg = safeParseJSON(lastMessage?.data);
@@ -40,9 +44,11 @@ const Display = () => {
 
   useEffect(() => {
     console.log(recievedData);
-
+    if (Model && recievedData.rotationState) {
+      Model.quaternion.fromArray(recievedData.quaternion).inverse();
+    }
     return () => {};
-  }, [recievedData]);
+  }, [recievedData, Model]);
 
   return (
     <div className="display container">
@@ -80,11 +86,8 @@ const Display = () => {
         </div>
         <h1 style={{ fontSize: "5em" }}>
           {recievedData.type == "custom"
-            ? recievedData.angle
-            : `${Math.floor(recievedData.rotationState?.roll)},${Math.floor(
-                recievedData.rotationState?.pitch
-              )},${Math.floor(recievedData.rotationState?.yaw)}`}
-          °
+            ? recievedData.angle + "°"
+            : recievedData.quaternion.join(",") + "XYZW"}
         </h1>
         <h3>{recievedData.type?.toUpperCase()}</h3>
         <h5 className="text-muted">
@@ -124,43 +127,21 @@ const Display = () => {
           Display code <span className="text-white">{displayCode}</span>
         </h4>
       </div>
-      <div className="d-flex justify-content-center py-5 bottle">
-        {/* <ThreeModel /> */}
-        <img
-          src={BottleNormal}
-          alt=""
-          srcset=""
-          className="w-auto"
-          // style={{
-          //   transform: `rotate(${
-          //     recievedData.type != "custom"
-          //       ? recievedData.type == "landscape-primary"
-          //         ? 360 - recievedData.angle
-          //         : recievedData.type == "landscape-secondary"
-          //         ? 90
-          //         : recievedData.angle
-          //       : recievedData.angle
-          //   }deg)`,
-          //   transition: recievedData.angle > 90 ? "0.2s" : "unset",
-          // }}
-
-          // style={{
-          //   transform: `rotate(${
-          //     recievedData.type == "custom"
-          //       ? recievedData.angle
-          //       : recievedData.rotationState?.pitch
-          //   }deg)`,
-          //   transition: "unset",
-          // }}
-
-          style={{
-            transform:
-              recievedData.type == "custom"
-                ? `rotate(${recievedData.angle}deg)`
-                : `rotateX(${recievedData.rotationState?.roll}deg)rotateY(${recievedData.rotationState?.pitch}deg)rotateZ(${recievedData.rotationState?.yaw}deg)`,
-            transition: "unset",
+      <div className="w-100 h-100">
+        <Canvas
+          width="100vw"
+          height="100vh"
+          style={{ height: "100vh", display: "block" }}
+          camera={{
+            fov: 35,
+            position: [4, 50, 235],
+            height: 2200,
+            width: 6200,
+            bottom: 1900,
           }}
-        />
+        >
+          <ThreeModel setModel={setModel} />
+        </Canvas>
       </div>
     </div>
   );

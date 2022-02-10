@@ -7,8 +7,10 @@ import { mapRange } from "../../Utils/clamp";
 import { Modal, Button, Form } from "react-bootstrap";
 import _ from "lodash";
 import { accelDenoise } from "./../../Utils/accelDenoise";
+import { useAbsOrientation } from "./../../Utils/useAbsOrientation";
 const { REACT_APP_WS_URL } = process.env;
 const Controller = () => {
+  const quaternion = useAbsOrientation();
   const [messageHistory, setMessageHistory] = useState([]);
   const { sendMessage, lastMessage, readyState } =
     useWebSocket(REACT_APP_WS_URL);
@@ -23,8 +25,8 @@ const Controller = () => {
       alert("You must give a 4 digit display code.");
     }
   };
-  const motionState = useMotion();
-  const [rotationState, setrotationState] = useState({});
+  // const motionState = useMotion();
+  // const [rotationState, setrotationState] = useState({});
   const orientation = useOrientation();
   const { width: deviceWidth } = useWindowSize();
   const location = useLocation();
@@ -37,14 +39,14 @@ const Controller = () => {
             ...orientation,
             time: Date.now(),
             displayCode,
-            rotationState,
+            quaternion,
           },
         })
       );
     }
 
     return () => {};
-  }, [orientation, rotationState, inputMode, displayCode]);
+  }, [orientation, quaternion]);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -56,18 +58,18 @@ const Controller = () => {
     return () => {};
   }, [location]);
 
-  useEffect(() => {
-    if (motionState?.acceleration) {
-      const { x, y, z } = accelDenoise(motionState.acceleration);
-      const pitch = ((Math.atan2(z, -y) * 180) / Math.PI).toFixed(0.2);
-      const roll = ((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
-      const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
-      const result = { pitch, roll, yaw };
-      setrotationState({ ...result, acc: { x, y, z } });
-    }
+  // useEffect(() => {
+  //   if (motionState?.acceleration) {
+  //     const { x, y, z } = accelDenoise(motionState.acceleration);
+  //     const pitch = ((Math.atan2(z, -y) * 180) / Math.PI).toFixed(0.2);
+  //     const roll = ((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
+  //     const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
+  //     const result = { pitch, roll, yaw };
+  //     setrotationState({ ...result, acc: { x, y, z } });
+  //   }
 
-    return () => {};
-  }, [motionState]);
+  //   return () => {};
+  // }, [motionState]);
 
   // useEffect(() => {
 
@@ -134,7 +136,7 @@ const Controller = () => {
 
         <div className="details position-absolute">
           <h1 style={{ fontSize: "3em" }}>
-            {inputMode == "custom" ? customInput : rotationState?.pitch}°
+            {inputMode == "custom" ? customInput : 0}°
           </h1>
           <h3>{orientation.type.toUpperCase()}</h3>
           <h5 className="text-muted">
