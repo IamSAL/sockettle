@@ -48,11 +48,14 @@ const Controller = () => {
   }, [location]);
 
   useEffect(() => {
-    const { x, y, z } = motionState.acceleration;
-    const pitch = (Math.atan2(z, -y) * 180) / Math.PI; // In degrees
-    const roll = (Math.atan2(x, -y) * 180) / Math.PI; // In degrees
-    const yaw = (Math.atan2(-x, -z) * 180) / Math.PI; // In degrees
-    setrotationState({ pitch, roll, yaw });
+    if (motionState?.acceleration) {
+      const { x, y, z } = motionState?.acceleration;
+      const pitch = (Math.atan2(z, -y) * 180) / Math.PI; // In degrees
+      const roll = (Math.atan2(x, -y) * 180) / Math.PI; // In degrees
+      const yaw = (Math.atan2(-x, -z) * 180) / Math.PI; // In degrees
+      setrotationState({ pitch, roll, yaw });
+    }
+
     return () => {};
   }, [motionState]);
 
