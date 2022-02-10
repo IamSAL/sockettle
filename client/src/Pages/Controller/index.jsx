@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CircleSlider } from "react-circle-slider";
 import { Link, useLocation } from "react-router-dom";
-import { useEffectOnce, useOrientation, useWindowSize } from "react-use";
+import { useMotion, useOrientation, useWindowSize } from "react-use";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { mapRange } from "../../Utils/clamp";
 import { Modal, Button, Form } from "react-bootstrap";
@@ -21,7 +21,7 @@ const Controller = () => {
       alert("You must give a 4 digit display code.");
     }
   };
-
+  const motionState = useMotion();
   const orientation = useOrientation();
   const { width: deviceWidth } = useWindowSize();
   const location = useLocation();
@@ -100,7 +100,7 @@ const Controller = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-
+        <pre>{JSON.stringify(motionState, null, 2)}</pre>
         <div className="details position-absolute">
           <h1 style={{ fontSize: "3em" }}>{orientation.angle}°</h1>
           <h3>{orientation.type.toUpperCase()}</h3>
