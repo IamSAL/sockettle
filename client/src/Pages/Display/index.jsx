@@ -45,7 +45,7 @@ const Display = () => {
   useEffect(() => {
     console.log(recievedData);
     if (Model && recievedData.rotationState) {
-      Model.quaternion.fromArray(recievedData.quaternion).inverse();
+      Model.quaternion.fromArray(recievedData.quaternion).invert();
     }
     return () => {};
   }, [recievedData, Model]);
