@@ -1,11 +1,9 @@
-const WebSocket = require("ws");
+const WebSocketServer = require("ws").Server;
 const Methods = require("./methods");
-
+const { server } = require("../web/index");
 const { normalizePort, safeParseJSON, generateError } = require("../helpers");
 
-const WSS = new WebSocket.Server({
-  port: normalizePort(process.env.SOCKET_PORT),
-});
+const WSS = new WebSocketServer({ server: server });
 
 WSS.on("listening", () => {
   console.log(
