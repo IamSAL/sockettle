@@ -21,7 +21,8 @@ const Controller = () => {
       alert("You must give a 4 digit display code.");
     }
   };
-  const motionState = useMotion();
+  const motionState = useMotion(60);
+  const [rotationState, setrotationState] = useState({});
   const orientation = useOrientation();
   const { width: deviceWidth } = useWindowSize();
   const location = useLocation();
@@ -45,6 +46,15 @@ const Controller = () => {
     }
     return () => {};
   }, [location]);
+
+  useEffect(() => {
+    const { x, y, z } = motionState.acceleration;
+    const pitch = (Math.atan2(z, -y) * 180) / Math.PI; // In degrees
+    const roll = (Math.atan2(x, -y) * 180) / Math.PI; // In degrees
+    const yaw = (Math.atan2(-x, -z) * 180) / Math.PI; // In degrees
+    setrotationState({ pitch, roll, yaw });
+    return () => {};
+  }, [motionState]);
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
@@ -101,6 +111,7 @@ const Controller = () => {
           </Modal.Footer>
         </Modal>
         <pre>{JSON.stringify(motionState, null, 2)}</pre>
+        <pre>{JSON.stringify(rotationState, null, 2)}</pre>
         <div className="details position-absolute">
           <h1 style={{ fontSize: "3em" }}>{orientation.angle}°</h1>
           <h3>{orientation.type.toUpperCase()}</h3>
