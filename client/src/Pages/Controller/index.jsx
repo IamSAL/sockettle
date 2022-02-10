@@ -15,7 +15,7 @@ const Controller = () => {
   const [customInput, setcustomInput] = useState(0);
   const [inputMode, setinputMode] = useState("custom");
   const handleClose = () => {
-    if (displayCode.length == 4) {
+    if (displayCode?.length == 4) {
       setShow(false);
     } else {
       alert("You must give a 4 digit display code.");
