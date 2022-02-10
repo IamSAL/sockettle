@@ -4,7 +4,7 @@ import { useThree } from "@react-three/fiber";
 import Model from "./pepsi_bottle/Pepsi_bottle";
 import Iphone from "./pepsi_bottle/Iphone";
 
-function ThreeModel({ setModel }) {
+function ThreeModel({ setModel, Model }) {
   const { size, camera, scene } = useThree();
 
   function findModel(scene) {
@@ -13,7 +13,6 @@ function ThreeModel({ setModel }) {
       if (phone) {
         phone.position.y = -35;
         camera.zoom = 2;
-        window.phone = phone;
         camera.updateProjectionMatrix();
         setModel(phone);
         clearInterval(finder);
@@ -24,8 +23,9 @@ function ThreeModel({ setModel }) {
     window.camera = camera;
     window.scene = scene;
     findModel(scene);
+    console.log(setModel, Model);
     return () => {};
-  }, [camera, scene]);
+  }, [camera, scene, Model]);
 
   return (
     <>

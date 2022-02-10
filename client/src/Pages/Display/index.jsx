@@ -43,8 +43,9 @@ const Display = () => {
   }, [lastMessage]);
 
   useEffect(() => {
-    console.log(recievedData);
-    if (Model && recievedData.rotationState) {
+    console.log(recievedData.quaternion);
+    if (Model && recievedData.quaternion) {
+      window.Model = Model;
       Model.quaternion.fromArray(recievedData.quaternion).invert();
     }
     return () => {};
@@ -85,10 +86,11 @@ const Display = () => {
           <span class="visually-hidden">Loading...</span>
         </div>
         <h1 style={{ fontSize: "5em" }}>
-          {recievedData.type == "custom"
-            ? recievedData.angle + "°"
-            : recievedData.quaternion.join(",") + "XYZW"}
+          {recievedData.type == "custom" ? recievedData.angle + "°" : +"XYZW"}
         </h1>
+        <span className="text-muted">
+          {recievedData.quaternion.map().join(",")}
+        </span>
         <h3>{recievedData.type?.toUpperCase()}</h3>
         <h5 className="text-muted">
           Connection{" "}
@@ -140,7 +142,7 @@ const Display = () => {
             bottom: 1900,
           }}
         >
-          <ThreeModel setModel={setModel} />
+          <ThreeModel setModel={setModel} Model={Model} />
         </Canvas>
       </div>
     </div>
