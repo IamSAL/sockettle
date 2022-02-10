@@ -30,12 +30,17 @@ const Controller = () => {
     sendMessage(
       JSON.stringify({
         method: "orientation",
-        payload: { ...orientation, time: Date.now(), displayCode },
+        payload: {
+          ...orientation,
+          time: Date.now(),
+          displayCode,
+          rotationState,
+        },
       })
     );
 
     return () => {};
-  }, [orientation]);
+  }, [orientation, rotationState]);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -58,6 +63,13 @@ const Controller = () => {
 
     return () => {};
   }, [motionState]);
+
+  // useEffect(() => {
+
+  //   return () => {
+
+  //   }
+  // }, [rotationState])
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
@@ -113,7 +125,7 @@ const Controller = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        <pre>{JSON.stringify(motionState, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(motionState, null, 2)}</pre> */}
         <pre>{JSON.stringify(rotationState, null, 2)}</pre>
         <div className="details position-absolute">
           <h1 style={{ fontSize: "3em" }}>{orientation.angle}°</h1>

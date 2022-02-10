@@ -115,17 +115,26 @@ const Display = () => {
           alt=""
           srcset=""
           className="w-auto"
+          // style={{
+          //   transform: `rotate(${
+          //     recievedData.type != "custom"
+          //       ? recievedData.type == "landscape-primary"
+          //         ? 360 - recievedData.angle
+          //         : recievedData.type == "landscape-secondary"
+          //         ? 90
+          //         : recievedData.angle
+          //       : recievedData.angle
+          //   }deg)`,
+          //   transition: recievedData.angle > 90 ? "0.2s" : "unset",
+          // }}
+
           style={{
             transform: `rotate(${
-              recievedData.type != "custom"
-                ? recievedData.type == "landscape-primary"
-                  ? 360 - recievedData.angle
-                  : recievedData.type == "landscape-secondary"
-                  ? 90
-                  : recievedData.angle
-                : recievedData.angle
+              recievedData.type == "custom"
+                ? recievedData.angle
+                : recievedData.rotationState?.pitch
             }deg)`,
-            transition: recievedData.angle > 90 ? "0.2s" : "unset",
+            transition: "unset",
           }}
         />
       </div>
