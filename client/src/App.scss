@@ -91,3 +91,13 @@ body {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.qr-code {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  background-color: #ffffff;
+  padding: 10px;
+  width: 300px;
+  color: black;
+}

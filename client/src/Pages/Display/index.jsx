@@ -3,6 +3,7 @@ import BottleNormal from "../../static/bttle_normal.png";
 import { Link } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { safeParseJSON } from "../../Utils/safeParseJSON";
+import QRCode from "react-qr-code";
 const { REACT_APP_WS_URL } = process.env;
 const Display = () => {
   const { sendMessage, lastMessage, readyState } =
@@ -37,6 +38,29 @@ const Display = () => {
   }, [lastMessage]);
   return (
     <div className="display container">
+      <div className="qr-code text-center shadow-lg">
+        <h4>{displayCode}</h4>
+        <QRCode
+          value={
+            window.location.origin + `/controller?displayCode=${displayCode}`
+          }
+          size={200}
+        />
+        <p className="w-75 text-center m-auto">
+          Scan the QR code, or go to{" "}
+          <span class="badge bg-primary text-light">
+            {window.location.origin + `/controller`}
+          </span>{" "}
+          from your PHONE{" "}
+        </p>
+        <div className="attribution">
+          <a href=" https://github.com/IamSAL/sockettle" target="_blank">
+            <span class="badge bg-light text-dark">
+              https://github.com/IamSAL/sockettle
+            </span>
+          </a>
+        </div>
+      </div>
       <div className="details position-fixed top-50">
         <div
           class={`spinner-grow text-${

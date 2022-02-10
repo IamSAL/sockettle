@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CircleSlider } from "react-circle-slider";
-import { Link } from "react-router-dom";
-import { useOrientation, useWindowSize } from "react-use";
+import { Link, useLocation } from "react-router-dom";
+import { useEffectOnce, useOrientation, useWindowSize } from "react-use";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { mapRange } from "../../Utils/clamp";
 import { Modal, Button, Form } from "react-bootstrap";
@@ -24,6 +24,7 @@ const Controller = () => {
 
   const orientation = useOrientation();
   const { width: deviceWidth } = useWindowSize();
+  const location = useLocation();
   useEffect(() => {
     sendMessage(
       JSON.stringify({
@@ -35,7 +36,16 @@ const Controller = () => {
     return () => {};
   }, [orientation]);
 
-  console.log({ REACT_APP_WS_URL });
+  useEffect(() => {
+    const query = new URLSearchParams(location.search);
+    const passedCode = query.get("displayCode");
+    if (passedCode?.length == 4) {
+      setdisplayCode(passedCode);
+      setShow(false);
+    }
+    return () => {};
+  }, [location]);
+
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
     [ReadyState.OPEN]: "Open",
@@ -60,7 +70,10 @@ const Controller = () => {
   }
   return (
     <>
-      <div className="controller container">
+      <div
+        className="controller container"
+        style={{ overflow: "hidden", maxHeight: "99vh" }}
+      >
         <Modal show={show} onHide={handleClose} centered>
           <Modal.Header closeButton>
             <Modal.Title>Enter 4 digit Display code</Modal.Title>
@@ -136,7 +149,19 @@ const Controller = () => {
             knobColor={inputMode == "custom" ? "blue" : "gray"}
             // circleWidth={8}
             // progressWidth={8}
-          />
+          ></CircleSlider>
+          {inputMode == "custom" && (
+            <h1
+              style={{
+                fontSize: "2em",
+                color: "blue",
+                position: "fixed",
+                bottom: "30px",
+              }}
+            >
+              {customInput}°
+            </h1>
+          )}
         </div>
       </div>
     </>
