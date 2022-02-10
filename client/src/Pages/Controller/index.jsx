@@ -64,7 +64,7 @@ const Controller = () => {
       const yaw = Math.floor((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
       const result = { pitch, roll, yaw };
       if (!_.isEqual(result, rotationState)) {
-        setrotationState(result);
+        setrotationState({ ...result, acc: { x, y, z } });
       }
     }
 

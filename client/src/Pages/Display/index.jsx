@@ -74,7 +74,9 @@ const Display = () => {
         <h1 style={{ fontSize: "5em" }}>
           {recievedData.type == "custom"
             ? recievedData.angle
-            : recievedData.rotationState?.pitch}
+            : recievedData.rotationState.acc
+            ? `${recievedData.rotationState.acc.x},${recievedData.rotationState.acc.y},${recievedData.rotationState.acc.z}`
+            : recievedData.rotationState.roll}
           °
         </h1>
         <h3>{recievedData.type?.toUpperCase()}</h3>
@@ -135,12 +137,22 @@ const Display = () => {
           //   transition: recievedData.angle > 90 ? "0.2s" : "unset",
           // }}
 
+          // style={{
+          //   transform: `rotate(${
+          //     recievedData.type == "custom"
+          //       ? recievedData.angle
+          //       : recievedData.rotationState?.pitch
+          //   }deg)`,
+          //   transition: "unset",
+          // }}
+
           style={{
-            transform: `rotate(${
+            transform:
               recievedData.type == "custom"
-                ? recievedData.angle
-                : recievedData.rotationState?.pitch
-            }deg)`,
+                ? `rotate(${recievedData.angle}deg)`
+                : recievedData.rotationState.acc
+                ? `rotateX(${recievedData.rotationState.acc.x} deg) rotateY(${recievedData.rotationState.acc.y} deg) rotateZ(${recievedData.rotationState.acc.z} deg)`
+                : `rotate(${recievedData.rotationState.roll}deg)`,
             transition: "unset",
           }}
         />
