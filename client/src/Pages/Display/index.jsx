@@ -74,7 +74,7 @@ const Display = () => {
         <h1 style={{ fontSize: "5em" }}>
           {recievedData.type == "custom"
             ? recievedData.angle
-            : recievedData.rotationState?.roll}
+            : recievedData.rotationState?.pitch}
           °
         </h1>
         <h3>{recievedData.type?.toUpperCase()}</h3>
@@ -139,7 +139,7 @@ const Display = () => {
             transform: `rotate(${
               recievedData.type == "custom"
                 ? recievedData.angle
-                : recievedData.rotationState?.roll
+                : recievedData.rotationState?.pitch
             }deg)`,
             transition: "unset",
           }}
