@@ -29,17 +29,19 @@ const Controller = () => {
   const { width: deviceWidth } = useWindowSize();
   const location = useLocation();
   useEffect(() => {
-    sendMessage(
-      JSON.stringify({
-        method: "orientation",
-        payload: {
-          ...orientation,
-          time: Date.now(),
-          displayCode,
-          rotationState,
-        },
-      })
-    );
+    if (inputMode != "custom") {
+      sendMessage(
+        JSON.stringify({
+          method: "orientation",
+          payload: {
+            ...orientation,
+            time: Date.now(),
+            displayCode,
+            rotationState,
+          },
+        })
+      );
+    }
 
     return () => {};
   }, [orientation, rotationState]);
