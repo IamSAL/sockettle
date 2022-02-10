@@ -5,6 +5,7 @@ import { useMotion, useOrientation, useWindowSize } from "react-use";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { mapRange } from "../../Utils/clamp";
 import { Modal, Button, Form } from "react-bootstrap";
+import _ from "lodash";
 const { REACT_APP_WS_URL } = process.env;
 const Controller = () => {
   const [messageHistory, setMessageHistory] = useState([]);
@@ -55,10 +56,15 @@ const Controller = () => {
   useEffect(() => {
     if (motionState?.acceleration) {
       const { x, y, z } = motionState?.acceleration;
-      const pitch = (Math.atan2(z, -y) * 180) / Math.PI; // In degrees
-      const roll = (Math.atan2(x, -y) * 180) / Math.PI; // In degrees
-      const yaw = (Math.atan2(-x, -z) * 180) / Math.PI; // In degrees
-      setrotationState({ pitch, roll, yaw });
+      const pitch = Math.floor((Math.atan2(z, -y) * 180) / Math.PI).toFixed(
+        0.2
+      );
+      const roll = Math.floor((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
+      const yaw = Math.floor((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
+      const result = { pitch, roll, yaw };
+      if (!_.isEqual(result, rotationState)) {
+        setrotationState(result);
+      }
     }
 
     return () => {};
@@ -126,7 +132,7 @@ const Controller = () => {
           </Modal.Footer>
         </Modal>
         {/* <pre>{JSON.stringify(motionState, null, 2)}</pre> */}
-        <pre>{JSON.stringify(rotationState, null, 2)}</pre>
+
         <div className="details position-absolute">
           <h1 style={{ fontSize: "3em" }}>{orientation.angle}°</h1>
           <h3>{orientation.type.toUpperCase()}</h3>
@@ -162,6 +168,7 @@ const Controller = () => {
               </button>
             </Link>
           </div>
+          {/* <pre>{JSON.stringify(rotationState, null, 2)}</pre> */}
         </div>
         <div className="row pt-5 mt-2  ">
           <CircleSlider

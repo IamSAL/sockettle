@@ -70,7 +70,12 @@ const Display = () => {
         >
           <span class="visually-hidden">Loading...</span>
         </div>
-        <h1 style={{ fontSize: "5em" }}>{recievedData.angle}°</h1>
+        <h1 style={{ fontSize: "5em" }}>
+          {recievedData.type == "custom"
+            ? recievedData.angle
+            : recievedData.rotationState?.pitch}
+          °
+        </h1>
         <h3>{recievedData.type?.toUpperCase()}</h3>
         <h5 className="text-muted">
           Connection{" "}
