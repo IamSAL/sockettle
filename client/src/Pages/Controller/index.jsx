@@ -8,9 +8,8 @@ import { Modal, Button, Form } from "react-bootstrap";
 const { REACT_APP_WS_URL } = process.env;
 const Controller = () => {
   const [messageHistory, setMessageHistory] = useState([]);
-  const { sendMessage, lastMessage, readyState } = useWebSocket(
-    `ws://192.168.0.102:8080`
-  );
+  const { sendMessage, lastMessage, readyState } =
+    useWebSocket(REACT_APP_WS_URL);
   const [displayCode, setdisplayCode] = useState(null);
   const [show, setShow] = useState(true);
   const [customInput, setcustomInput] = useState(0);

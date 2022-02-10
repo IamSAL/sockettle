@@ -3,11 +3,10 @@ import BottleNormal from "../../static/bttle_normal.png";
 import { Link } from "react-router-dom";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { safeParseJSON } from "../../Utils/safeParseJSON";
-
+const { REACT_APP_WS_URL } = process.env;
 const Display = () => {
-  const { sendMessage, lastMessage, readyState } = useWebSocket(
-    `ws://192.168.0.102:8080`
-  );
+  const { sendMessage, lastMessage, readyState } =
+    useWebSocket(REACT_APP_WS_URL);
   const [displayCode, setdisplayCode] = useState(
     Math.floor(1000 + Math.random() * 9000)
   );
