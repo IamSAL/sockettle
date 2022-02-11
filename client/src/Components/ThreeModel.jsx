@@ -1,11 +1,40 @@
 import React, { useRef, useState, useEffect, Suspense } from "react";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, Stats, Html } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import Model from "./pepsi_bottle/Pepsi_bottle";
 import Iphone from "./pepsi_bottle/Iphone";
-
-function ThreeModel({ setModel, Model }) {
+import Loading from "./Loading";
+import * as THREE from "three";
+function ThreeModel({ setModel, Model, recievedData }) {
   const { size, camera, scene } = useThree();
+
+  useEffect(() => {
+    window.Model = Model;
+    window.THREE = THREE;
+    console.log({ Model });
+    if (Model && Model.rotation && Model.quaternion && recievedData) {
+      console.log(Model, Model.rotation, Model.quaternion, Model.rotation.x);
+      if (recievedData.quaternion) {
+        Model.quaternion.fromArray(recievedData.quaternion);
+      } else if (
+        recievedData.type.includes("landscape") ||
+        recievedData.type.includes("portrait")
+      ) {
+        Model.setRotationFromEuler(
+          new THREE.Euler(
+            recievedData.rotationState?.roll,
+            recievedData.rotationState?.pitch,
+            recievedData.rotationState?.yaw,
+            "XYZ"
+          )
+        );
+      } else {
+        Model.setRotationFromEuler(new THREE.Euler(0, 0, 0, "XYZ"));
+        Model.rotateZ(recievedData.angle);
+      }
+    }
+    return () => {};
+  }, [recievedData, Model]);
 
   function findModel(scene) {
     const finder = setInterval(() => {
@@ -35,7 +64,13 @@ function ThreeModel({ setModel, Model }) {
       <FillLight brightness={1.6} color={"#bdefff"} />
       <RimLight brightness={24} color={"#fff"} />
 
-      <Suspense fallback={null}>
+      <Suspense
+        fallback={
+          <Html>
+            <Loading />
+          </Html>
+        }
+      >
         {/* <Model /> */}
         <Iphone />
       </Suspense>

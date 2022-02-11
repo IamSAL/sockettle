@@ -11,13 +11,12 @@ import { useAbsOrientation } from "./../../Utils/useAbsOrientation";
 const { REACT_APP_WS_URL } = process.env;
 const Controller = () => {
   const quaternion = useAbsOrientation();
-  const [messageHistory, setMessageHistory] = useState([]);
   const { sendMessage, lastMessage, readyState } =
     useWebSocket(REACT_APP_WS_URL);
   const [displayCode, setdisplayCode] = useState(null);
   const [show, setShow] = useState(true);
   const [customInput, setcustomInput] = useState(0);
-  const [inputMode, setinputMode] = useState("custom");
+  const [inputMode, setinputMode] = useState("quaternion");
   const handleClose = () => {
     if (displayCode?.length == 4) {
       setShow(false);
@@ -25,13 +24,13 @@ const Controller = () => {
       alert("You must give a 4 digit display code.");
     }
   };
-  // const motionState = useMotion();
-  // const [rotationState, setrotationState] = useState({});
+  const motionState = useMotion();
+  const [rotationState, setrotationState] = useState({});
   const orientation = useOrientation();
-  const { width: deviceWidth } = useWindowSize();
+
   const location = useLocation();
   useEffect(() => {
-    if (inputMode != "custom") {
+    if (!inputMode || inputMode == "quaternion") {
       sendMessage(
         JSON.stringify({
           method: "orientation",
@@ -46,7 +45,7 @@ const Controller = () => {
     }
 
     return () => {};
-  }, [orientation, quaternion]);
+  }, [orientation, quaternion, sendMessage, displayCode, inputMode]);
 
   useEffect(() => {
     const query = new URLSearchParams(location.search);
@@ -58,25 +57,35 @@ const Controller = () => {
     return () => {};
   }, [location]);
 
-  // useEffect(() => {
-  //   if (motionState?.acceleration) {
-  //     const { x, y, z } = accelDenoise(motionState.acceleration);
-  //     const pitch = ((Math.atan2(z, -y) * 180) / Math.PI).toFixed(0.2);
-  //     const roll = ((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
-  //     const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
-  //     const result = { pitch, roll, yaw };
-  //     setrotationState({ ...result, acc: { x, y, z } });
-  //   }
+  useEffect(() => {
+    if (motionState?.acceleration) {
+      const { x, y, z } = accelDenoise(motionState.acceleration);
+      const pitch = ((Math.atan2(z, -y) * 180) / Math.PI).toFixed(0.2);
+      const roll = ((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
+      const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
+      const result = { pitch, roll, yaw };
+      setrotationState({ ...result, acc: { x, y, z } });
+    }
 
-  //   return () => {};
-  // }, [motionState]);
+    return () => {};
+  }, [motionState]);
 
-  // useEffect(() => {
-
-  //   return () => {
-
-  //   }
-  // }, [rotationState])
+  useEffect(() => {
+    if (inputMode == "accelero") {
+      sendMessage(
+        JSON.stringify({
+          method: "orientation",
+          payload: {
+            ...orientation,
+            time: Date.now(),
+            displayCode,
+            rotationState,
+          },
+        })
+      );
+    }
+    return () => {};
+  }, [rotationState, inputMode, sendMessage, displayCode, orientation]);
 
   const connectionStatus = {
     [ReadyState.CONNECTING]: "Connecting",
@@ -88,17 +97,19 @@ const Controller = () => {
 
   function handleCustomInput(val) {
     setcustomInput(val);
-    sendMessage(
-      JSON.stringify({
-        method: "orientation",
-        payload: {
-          type: "custom",
-          angle: customInput,
-          time: Date.now(),
-          displayCode,
-        },
-      })
-    );
+    if (inputMode == "custom") {
+      sendMessage(
+        JSON.stringify({
+          method: "orientation",
+          payload: {
+            type: "custom",
+            angle: customInput,
+            time: Date.now(),
+            displayCode,
+          },
+        })
+      );
+    }
   }
   return (
     <>
@@ -150,7 +161,44 @@ const Controller = () => {
             | {connectionStatus}
           </h5>
           <div className="mode py-2">
-            <Form.Check
+            <div className="mb-3">
+              <Form.Check
+                inline
+                label="1"
+                name="group1"
+                checked={inputMode == "quaternion"}
+                label={`quaternion`}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setinputMode("quaternion");
+                  }
+                }}
+              />
+              <Form.Check
+                inline
+                label="2"
+                name="group1"
+                checked={inputMode == "accelero"}
+                label={`Accelero`}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setinputMode("accelero");
+                  }
+                }}
+              />
+              <Form.Check
+                inline
+                checked={inputMode == "custom"}
+                label={`Custom input`}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setinputMode("custom");
+                  }
+                }}
+              />
+            </div>
+
+            {/* <Form.Check
               type="switch"
               id="custom-switch"
               checked={inputMode == "custom"}
@@ -162,7 +210,7 @@ const Controller = () => {
                   setinputMode("rotation");
                 }
               }}
-            />
+            /> */}
           </div>
           <div className="postion-absolute mt-1">
             <Link to="/">

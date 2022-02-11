@@ -42,14 +42,6 @@ const Display = () => {
     return () => {};
   }, [lastMessage]);
 
-  useEffect(() => {
-    window.Model = Model;
-    if (Model && recievedData.quaternion) {
-      Model.quaternion.fromArray(recievedData.quaternion).invert();
-    }
-    return () => {};
-  }, [recievedData, Model]);
-
   return (
     <div className="display container">
       <div className="qr-code text-center shadow-lg">
@@ -85,7 +77,7 @@ const Display = () => {
           <span class="visually-hidden">Loading...</span>
         </div>
         <h1 style={{ fontSize: "5em" }}>
-          {recievedData.type == "custom" ? recievedData.angle + "°" : +"XYZW"}
+          {recievedData.type == "custom" ? recievedData.angle + "°" : "XYZW"}
         </h1>
         <span className="text-muted">{recievedData.quaternion?.join(",")}</span>
         <h3>{recievedData.type?.toUpperCase()}</h3>
@@ -139,7 +131,11 @@ const Display = () => {
             bottom: 1900,
           }}
         >
-          <ThreeModel setModel={setModel} Model={Model} />
+          <ThreeModel
+            setModel={setModel}
+            Model={Model}
+            recievedData={recievedData}
+          />
         </Canvas>
       </div>
     </div>
