@@ -9,8 +9,9 @@ import { Canvas } from "@react-three/fiber";
 
 const { REACT_APP_WS_URL } = process.env;
 const Display = () => {
+  const [socketUrl, setSocketUrl] = useState(REACT_APP_WS_URL);
   const { sendMessage, lastMessage, readyState } =
-    useWebSocket(REACT_APP_WS_URL);
+    useWebSocket(socketUrl);
   const [displayCode, setdisplayCode] = useState(
     Math.floor(1000 + Math.random() * 9000)
   );
@@ -42,6 +43,9 @@ const Display = () => {
     return () => {};
   }, [lastMessage]);
 
+
+  
+
   return (
     <div className="display container">
       <div className="qr-code text-center shadow-lg">
@@ -54,14 +58,14 @@ const Display = () => {
         />
         <p className="w-75 text-center m-auto">
           Scan the QR code, or go to{" "}
-          <span class="badge bg-primary text-light">
+          <span className="badge bg-primary text-light">
             {window.location.origin + `/controller`}
           </span>{" "}
           from your PHONE{" "}
         </p>
         <div className="attribution">
           <a href=" https://github.com/IamSAL/sockettle" target="_blank">
-            <span class="badge bg-light text-dark">
+            <span className="badge bg-light text-dark">
               https://github.com/IamSAL/sockettle
             </span>
           </a>
@@ -69,17 +73,17 @@ const Display = () => {
       </div>
       <div className="details position-fixed top-50">
         <div
-          class={`spinner-grow text-${
+          className={`spinner-grow text-${
             connectionStatus == "Open" ? "primary" : "danger"
           }`}
           role="status"
         >
-          <span class="visually-hidden">Loading...</span>
+          <span className="visually-hidden">Loading...</span>
         </div>
         <h1 style={{ fontSize: "5em" }}>
           {recievedData.type == "custom" ? recievedData.angle + "°" : "XYZW"}
         </h1>
-        <span className="text-muted">{recievedData.quaternion?.join(",")}</span>
+        <span className="text-muted">{recievedData.quaternion?.map(q=>q.toFixed(4)).join(",")}</span>
         <h3>{recievedData.type?.toUpperCase()}</h3>
         <h5 className="text-muted">
           Connection{" "}
@@ -107,10 +111,30 @@ const Display = () => {
         </h5>
 
         <Link to="/">
-          <button type="button" class="btn text-light bg-gradient">
+          <button type="button" className="btn text-light bg-gradient">
             Back to home
           </button>
         </Link>
+        {
+              (["Connecting","Uninstantiated","Closing",""].includes(connectionStatus) || !connectionStatus)&& <button type="button" className="btn text-light bg-gradient mx-2" >
+             <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+            
+ Loading
+            </button>}
+            {
+              connectionStatus=="Open" && <button type="button" className="btn text-light bg-gradient mx-2" onClick={()=>setSocketUrl(null)}>
+             
+            
+  Disconnect
+            </button>}{ connectionStatus=="Closed" && <button type="button" className="btn text-light bg-gradient mx-2" onClick={()=>setSocketUrl(REACT_APP_WS_URL)}>
+        
+                Reconnect
+              </button>
+            }
       </div>
 
       <div className="details position-fixed top-50 left-20">

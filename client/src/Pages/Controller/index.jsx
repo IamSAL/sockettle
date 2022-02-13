@@ -10,11 +10,13 @@ import { accelDenoise } from "./../../Utils/accelDenoise";
 import { useAbsOrientation } from "./../../Utils/useAbsOrientation";
 const { REACT_APP_WS_URL } = process.env;
 const Controller = () => {
+  const [socketUrl, setSocketUrl] = useState(REACT_APP_WS_URL);
   const quaternion = useAbsOrientation();
   const { sendMessage, lastMessage, readyState } =
-    useWebSocket(REACT_APP_WS_URL);
+    useWebSocket(socketUrl);
   const [displayCode, setdisplayCode] = useState(null);
   const [show, setShow] = useState(true);
+  const [debugShow, setdebugShow] = useState(false);
   const [customInput, setcustomInput] = useState(0);
   const [inputMode, setinputMode] = useState("quaternion");
   const handleClose = () => {
@@ -23,6 +25,9 @@ const Controller = () => {
     } else {
       alert("You must give a 4 digit display code.");
     }
+  };
+  const handleDebugClose = () => {
+    setdebugShow(false)
   };
   const motionState = useMotion();
   const [rotationState, setrotationState] = useState({});
@@ -36,6 +41,8 @@ const Controller = () => {
           method: "orientation",
           payload: {
             ...orientation,
+            type:"quaternion",
+            custom:"HELLO",
             time: Date.now(),
             displayCode,
             quaternion,
@@ -44,7 +51,9 @@ const Controller = () => {
       );
     }
 
-    return () => {};
+    return () => {
+      // ()=> setSocketUrl(null)
+    };
   }, [orientation, quaternion, sendMessage, displayCode, inputMode]);
 
   useEffect(() => {
@@ -59,12 +68,12 @@ const Controller = () => {
 
   useEffect(() => {
     if (motionState?.acceleration) {
-      const { x, y, z } = accelDenoise(motionState.acceleration);
-      const pitch = ((Math.atan2(z, -y) * 180) / Math.PI).toFixed(0.2);
-      const roll = ((Math.atan2(x, -y) * 180) / Math.PI).toFixed(0.2);
-      const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI).toFixed(0.2);
+      const { x, y, z } = motionState.accelerationIncludingGravity;
+      const pitch = ((Math.atan2(z, -y) * 180) / Math.PI)
+      const roll = ((Math.atan2(x, -y) * 180) / Math.PI)
+      const yaw = ((Math.atan2(-x, -z) * 180) / Math.PI)
       const result = { pitch, roll, yaw };
-      setrotationState({ ...result, acc: { x, y, z } });
+      setrotationState({ ...result, acc: {x, y, z } });
     }
 
     return () => {};
@@ -77,6 +86,8 @@ const Controller = () => {
           method: "orientation",
           payload: {
             ...orientation,
+            type:"accelero",
+            custom:"HELLO",
             time: Date.now(),
             displayCode,
             rotationState,
@@ -96,7 +107,15 @@ const Controller = () => {
   }[readyState];
 
   function handleCustomInput(val) {
-    setcustomInput(val);
+    setcustomInput(()=>{
+      if(val<360 && val>=0){
+        return val
+      }else if (val>359){
+        return 360
+      }else{
+        return 0
+      }
+    });
     if (inputMode == "custom") {
       sendMessage(
         JSON.stringify({
@@ -104,6 +123,7 @@ const Controller = () => {
           payload: {
             type: "custom",
             angle: customInput,
+            custom:"HELLO",
             time: Date.now(),
             displayCode,
           },
@@ -143,13 +163,14 @@ const Controller = () => {
             </Button>
           </Modal.Footer>
         </Modal>
-        {/* <pre>{JSON.stringify(motionState, null, 2)}</pre> */}
+       
+
 
         <div className="details position-absolute">
-          <h1 style={{ fontSize: "3em" }}>
-            {inputMode == "custom" ? customInput : 0}°
-          </h1>
-          <h3>{orientation.type.toUpperCase()}</h3>
+          {/* <h1 style={{ fontSize: "3em" }}>
+            {inputMode == "custom" ? customInput?.toFixed(4) : 0}
+          </h1> */}
+          {/* <h3>{orientation.type.toUpperCase()}</h3> */}
           <h5 className="text-muted">
             Controlling{" "}
             <span
@@ -158,7 +179,13 @@ const Controller = () => {
             >
               {displayCode}
             </span>{" "}
-            | {connectionStatus}
+            |  <span
+            className={`text-${
+              connectionStatus == "Open" ? "primary" : "danger"
+            }`}
+          >
+            {connectionStatus}
+          </span>
           </h5>
           <div className="mode py-2">
             <div className="mb-3">
@@ -218,6 +245,7 @@ const Controller = () => {
                 Back to home
               </button>
             </Link>
+           
           </div>
           {/* <pre>{JSON.stringify(rotationState, null, 2)}</pre> */}
         </div>
@@ -226,26 +254,76 @@ const Controller = () => {
             value={customInput}
             onChange={handleCustomInput}
             className="customCircle"
-            max={360}
-            min={0}
+            max={365}
+            stepSize={1}
+            min={-5}
             size={320}
             disabled={inputMode != "custom"}
             knobColor={inputMode == "custom" ? "blue" : "gray"}
             // circleWidth={8}
             // progressWidth={8}
           ></CircleSlider>
+        <div className="row d-flex " style={{ position: "fixed",
+                bottom: "30px",}}>
+          
+          <div className="col">
+          <button type="button" class="btn text-light bg-gradient" onClick={()=>setdebugShow(true)}>Debug</button>
+          
+          </div>
+          <div className="col">
           {inputMode == "custom" && (
             <h1
               style={{
-                fontSize: "2em",
+                fontSize: "1.4em",
                 color: "blue",
-                position: "fixed",
-                bottom: "30px",
+               
               }}
             >
-              {customInput}°
+              {Math.floor(customInput)}
             </h1>
+           
           )}
+           
+          </div>
+          <div className="col">
+          {
+              (["Connecting","Uninstantiated","Closing",""].includes(connectionStatus) || !connectionStatus)&& <button type="button" class="btn text-light bg-gradient" >
+             <span
+                  className="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                />
+            
+ 
+            </button>}
+            {
+              connectionStatus=="Open" && <button type="button" class="btn text-light bg-gradient" onClick={()=>setSocketUrl(null)}>
+             
+            
+  Disconnect
+            </button>}{ connectionStatus=="Closed" && <button type="button" class="btn text-light bg-gradient" onClick={()=>setSocketUrl(REACT_APP_WS_URL)}>
+        
+                Reconnect
+              </button>
+            }
+          </div>
+        </div>
+         
+           
+           <Modal show={debugShow} onHide={handleDebugClose} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>Motion sensors</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+           <pre>{JSON.stringify({...motionState,...rotationState}, null, 2)}</pre>
+          </Modal.Body>
+          <Modal.Footer>
+         
+            <Button variant="light" onClick={handleDebugClose}>
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
         </div>
       </div>
     </>

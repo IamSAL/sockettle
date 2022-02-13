@@ -14,8 +14,9 @@ body {
 
 .controller {
   align-items: center;
-  height: 100vh;
+  height: 90vh;
   display: flex;
+  overflow: hidden;
   .details {
     top: 20px;
     left: 35%;

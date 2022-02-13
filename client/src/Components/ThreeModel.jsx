@@ -5,32 +5,75 @@ import Model from "./pepsi_bottle/Pepsi_bottle";
 import Iphone from "./pepsi_bottle/Iphone";
 import Loading from "./Loading";
 import * as THREE from "three";
+import { mapRange } from "../Utils/clamp";
 function ThreeModel({ setModel, Model, recievedData }) {
   const { size, camera, scene } = useThree();
+  const animationRef = React.useRef();
 
   useEffect(() => {
     window.Model = Model;
     window.THREE = THREE;
-    console.log({ Model });
+   
+
     if (Model && Model.rotation && Model.quaternion && recievedData) {
-      console.log(Model, Model.rotation, Model.quaternion, Model.rotation.x);
-      if (recievedData.quaternion) {
-        Model.quaternion.fromArray(recievedData.quaternion);
+    
+      if (recievedData.type=="quaternion") {
+        //Model.quaternion.fromArray(recievedData.quaternion)
+       //Model.setRotationFromQuaternion(recievedData.quaternion)
+       scene.rotation.y = 183 * Math.PI/180;
+scene.rotation.z = -48 * Math.PI/180;
+scene.rotation.x = 80 * Math.PI/180;
+scene.position.x=-20
+scene.position.y=-15
+scene.position.z=50
+       Model.setRotationFromEuler(
+        // new THREE.Euler().setFromQuaternion(recievedData.quaternion)
+        new THREE.Euler().setFromQuaternion(new THREE.Quaternion(...recievedData.quaternion))
+      );
+    
+      
       } else if (
-        recievedData.type.includes("landscape") ||
-        recievedData.type.includes("portrait")
+        recievedData.type=="accelero"
       ) {
+        scene.setRotationFromEuler( new THREE.Euler(
+          // Math.PI/180*(recievedData.angle)
+          0,
+         0,
+        0,
+
+          "XYZ"
+        ))
+        scene.position.x=0
+        scene.position.y=0
+        scene.position.z=0
+        const inDegree=mapRange(recievedData.rotationState?.acc.x,-9.8,9.8,-90,90)
+        const z= Math.PI/180*inDegree
+        console.log({z,inDegree})
         Model.setRotationFromEuler(
           new THREE.Euler(
-            recievedData.rotationState?.roll,
-            recievedData.rotationState?.pitch,
-            recievedData.rotationState?.yaw,
+            // Math.PI/180*(recievedData.angle)
+            0,
+           0,
+          z,
+ 
             "XYZ"
           )
         );
-      } else {
-        Model.setRotationFromEuler(new THREE.Euler(0, 0, 0, "XYZ"));
-        Model.rotateZ(recievedData.angle);
+      } else if(recievedData.type=="custom") {
+        scene.setRotationFromEuler( new THREE.Euler(
+          // Math.PI/180*(recievedData.angle)
+          0,
+         0,
+        0,
+
+          "XYZ"
+        ))
+        scene.position.x=0
+scene.position.y=0
+scene.position.z=0
+
+        Model.setRotationFromEuler(new THREE.Euler(0, 0, Math.PI/180*(360-recievedData.angle), "XYZ"));
+        //Model.rotateZ(recievedData.angle);
       }
     }
     return () => {};
@@ -55,6 +98,52 @@ function ThreeModel({ setModel, Model, recievedData }) {
 
     return () => {};
   }, [camera, scene, Model]);
+
+  // useEffect(() => {
+  //   window.Model = Model;
+  //   window.THREE = THREE;
+  //    function animate(recievedData,Model){
+       
+  //   function animateFunction()
+  //   {
+  //       // updateAnimation();
+  //       console.log(recievedData)
+  //       if (Model && Model.rotation && Model.quaternion && recievedData) {
+        
+  //         if (recievedData.quaternion) {
+  //           Model.quaternion.fromArray(recievedData.quaternion);
+  //         } else if (
+  //           recievedData.type.includes("landscape") ||
+  //           recievedData.type.includes("portrait")
+  //         ) {
+  //           const z= Math.PI/180*mapRange(recievedData.rotationState?.acc.x,-9.8,9.8,-90,90)
+  //           // console.log(z,mapRange(recievedData.rotationState?.acc.x,-9.8,9.8,0,360).toFixed(2))
+  //           Model.setRotationFromEuler(
+  //             new THREE.Euler(
+  //               // Math.PI/180*(recievedData.angle)
+  //               0,
+  //              0,
+  //             z,
+  //               "XYZ"
+  //             )
+  //           );
+  //         } else if(recievedData.type=="custom") {
+  //           Model.setRotationFromEuler(new THREE.Euler(0, 0, Math.PI/180*(360-recievedData.angle), "XYZ"));
+  //           //Model.rotateZ(recievedData.angle);
+  //         }
+  //       }
+  //       animationRef.current=requestAnimationFrame(animateFunction);
+    
+  //   }
+    
+  //     animationRef.current=requestAnimationFrame(animateFunction);
+  //    }
+  //    animate(recievedData,Model)
+  //   return () => {
+  //    cancelAnimationFrame(animationRef.current)
+  //   }
+  // }, [recievedData,Model,animationRef])
+  
 
   return (
     <>
